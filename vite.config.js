@@ -4,7 +4,7 @@ export default {
   plugins: [react()],
   build: {
     rollupOptions: {
-      external: ['react-router-dom'], // Prevent Rollup from bundling it
+      external: ['react-router-dom', 'react-hot-toast'], // Add 'react-hot-toast' here
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
@@ -25,6 +25,6 @@ export default {
       'react-router-dom', // ✅ pre-bundle this
       'react-intersection-observer',
     ],
-    exclude: [],
+    exclude: [], // Keep this empty unless you have specific exclusions
   },
 };
