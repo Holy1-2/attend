@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Todo List</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 min-h-screen transition-colors">
+    <div class="container mx-auto max-w-md px-4 py-8">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6">
+            <!-- Header -->
+            <div class="flex items-center justify-between mb-8">
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">Tasks</h1>
+                <button id="theme-toggle" class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700">
+                    <svg class="w-6 h-6 text-gray-800 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Add Task -->
+            <div class="flex gap-2 mb-6">
+                <input type="text" id="task-input" 
+                    class="flex-1 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 dark:text-white"
+                    placeholder="Add new task">
+                <button id="add-task" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                    Add
+                </button>
+            </div>
+
+            <!-- Task List -->
+            <div id="task-list" class="space-y-3">
+                <!-- Sample Task -->
+                <div class="task-item flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <div class="flex items-center flex-1">
+                        <div class="checkbox w-5 h-5 border-2 border-gray-300 dark:border-gray-500 rounded-full mr-3 cursor-pointer transition-colors"></div>
+                        <span class="text-gray-800 dark:text-gray-200">Sample Task</span>
+                    </div>
+                    <button class="delete-btn text-gray-400 hover:text-red-500 transition-colors">
+                        ×
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dark mode toggle
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+        });
+
+        // Task management
+        let tasks = [];
+        const taskList = document.getElementById('task-list');
+        const taskInput = document.getElementById('task-input');
+
+        document.getElementById('add-task').addEventListener('click', addTask);
+        taskInput.addEventListener('keypress', (e) => {
+            if(e.key === 'Enter') addTask();
+        });
+
+        function addTask() {
+            const text = taskInput.value.trim();
+            if(text) {
+                tasks.push({ text, completed: false });
+                taskInput.value = '';
+                renderTasks();
+            }
+        }
+
+        function renderTasks() {
+            taskList.innerHTML = tasks.map((task, index) => `
+                <div class="task-item flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors">
+                    <div class="flex items-center flex-1">
+                        <div class="checkbox w-5 h-5 border-2 ${task.completed ? 'border-blue-500 bg-blue-500' : 'border-gray-300 dark:border-gray-500'} rounded-full mr-3 cursor-pointer transition-colors">
+                            ${task.completed ? '✓' : ''}
+                        </div>
+                        <span class="${task.completed ? 'text-gray-400 dark:text-gray-500 line-through' : 'text-gray-800 dark:text-gray-200'}">${task.text}</span>
+                    </div>
+                    <button class="delete-btn text-gray-400 hover:text-red-500 transition-colors" onclick="deleteTask(${index})">
+                        ×
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            renderTasks();
+        }
+
+        // Toggle task completion
+        taskList.addEventListener('click', (e) => {
+            if(e.target.classList.contains('checkbox')) {
+                const index = [...document.querySelectorAll('.task-item')].indexOf(e.target.closest('.task-item'));
+                tasks[index].completed = !tasks[index].completed;
+                renderTasks();
+            }
+        });
+
+        // Initial render
+        renderTasks();
+    </script>
+</body>
+</html>
